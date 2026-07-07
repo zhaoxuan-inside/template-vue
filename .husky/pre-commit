@@ -1,1 +1,2 @@
-./node_modules/.bin/lint-staged
+#!/usr/bin/env bash
+source ~/.nvm/nvm.sh && ./node_modules/.bin/lint-staged

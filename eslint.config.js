@@ -20,6 +20,7 @@ export default [
       '.husky/**',
       'src/auto-imports.d.ts',
       'src/components.d.ts',
+      'src/test/**',
     ],
   },
   js.configs.recommended,
@@ -120,6 +121,24 @@ export default [
     rules: {
       'prettier/prettier': 'error',
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
+  },
+  {
+    files: ['**/*.spec.ts'],
+    languageOptions: {
+      globals: {
+        describe: true,
+        it: true,
+        expect: true,
+        vi: true,
+        beforeEach: true,
+        afterEach: true,
+        beforeAll: true,
+        afterAll: true,
+      },
+    },
+    rules: {
+      'no-undef': 'off',
     },
   },
 ]
