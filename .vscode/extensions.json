@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "Vue.volar",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "gruntfuggly.todo-tree",
+    "bradlc.vscode-tailwindcss",
+    "eamodio.gitlens",
+    "formulahendry.auto-rename-tag"
+  ],
+  "unwantedRecommendations": [
+    "octref.vetur"
+  ]
+}
