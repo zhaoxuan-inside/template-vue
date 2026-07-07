@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: var(--n-color-primary);
+  --color-primary-hover: var(--n-color-primary-hover);
+  --color-success: var(--n-color-success);
+  --color-warning: var(--n-color-warning);
+  --color-danger: var(--n-color-error);
+  --color-bg-primary: var(--n-color-background);
+  --color-bg-secondary: var(--n-color-card);
+  --color-text-primary: var(--n-color-text);
+  --color-text-secondary: var(--n-color-text-2);
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}

@@ -1,0 +1,85 @@
+{
+  "id": "team-vue-dev",
+  "name": "Team Vue Dev",
+  "description": "Vue 3 + TypeScript 团队标准开发环境",
+  "settings": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true,
+      "source.organizeImports": true
+    },
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "files.eol": "\n",
+    "files.autoSave": "onFocusChange",
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "typescript.preferences.quoteStyle": "single",
+    "javascript.preferences.importModuleSpecifier": "non-relative",
+    "javascript.preferences.quoteStyle": "single",
+    "editor.codeLens": true,
+    "eslint.validate": ["javascript", "typescript", "vue"],
+    "eslint.useLocalEsLint": true,
+    "prettier.useLocalPrettier": true,
+    "vetur.validation.template": false,
+    "[vue]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/.git": true
+    },
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/.git": true
+    },
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "editor.rulers": [100],
+    "editor.wordWrap": "on",
+    "editor.wordWrapColumn": 100,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.inlineSuggest.enabled": true,
+    "editor.semanticHighlighting.enabled": true,
+    "editor.smoothScrolling": true,
+    "workbench.startupEditor": "none",
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.defaultProfile.osx": "zsh",
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.cursorBlinking": "smooth",
+    "terminal.integrated.cursorStyle": "line",
+    "terminal.integrated.fontSize": 14,
+    "terminal.integrated.lineHeight": 1.4
+  },
+  "extensions": [
+    "Vue.volar",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "gruntfuggly.todo-tree",
+    "bradlc.vscode-tailwindcss",
+    "eamodio.gitlens",
+    "formulahendry.auto-rename-tag"
+  ],
+  "keybindings": [],
+  "launch": [],
+  "tasks": [],
+  "snippets": {},
+  "colorTheme": "Dark+"
+}

@@ -11,6 +11,7 @@ Thumbs.db
 !.vscode/launch.json
 !.vscode/settings.json
 !.vscode/tasks.json
+!.vscode/team-vue-dev.code-profile
 
 .env
 .env.local
