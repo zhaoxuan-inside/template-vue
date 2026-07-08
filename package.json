@@ -15,7 +15,8 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "setup": "npm install && npm run prepare",
-    "prepare": "husky && git config core.hooksPath .husky"
+    "prepare": "husky && git config core.hooksPath .husky",
+    "install:ext": "bash scripts/install-extensions.sh"
   },
   "engines": {
     "node": "20.19.0",
