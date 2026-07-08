@@ -1,1 +1,1 @@
-export {}
+export { useLoginDomain } from './loginDomain'

@@ -21,8 +21,18 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/**', 'dist/**', 'src/**/*.d.ts', 'src/**/index.ts'],
+      exclude: ['node_modules/**', 'dist/**', 'src/**/*.d.ts', 'src/**/index.ts', 'src/test/**'],
+      thresholds: {
+        global: {
+          branches: 60,
+          functions: 60,
+          lines: 60,
+          statements: 60,
+        },
+      },
     },
     setupFiles: ['src/test/setup.ts'],
+    mockReset: true,
+    unstubGlobals: true,
   },
 })

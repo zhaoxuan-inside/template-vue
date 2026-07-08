@@ -16,3 +16,9 @@ Thumbs.db
 .env
 .env.local
 .env.*.local
+
+coverage/
+*.d.ts
+!.nuxt/*.d.ts
+!.output/*.d.ts
+!src/**/*.d.ts

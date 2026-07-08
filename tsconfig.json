@@ -23,8 +23,9 @@
       "@shared/*": ["src/shared/*"]
     },
     "allowJs": true,
-    "types": ["node"]
+    "types": ["node", "vitest"]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.js"],
+  "exclude": ["src/**/*.spec.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

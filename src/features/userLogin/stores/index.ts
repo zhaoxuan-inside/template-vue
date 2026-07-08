@@ -1,1 +1,1 @@
-export {}
+export { useLoginStore } from './loginStore'
