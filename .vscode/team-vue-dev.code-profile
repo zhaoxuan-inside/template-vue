@@ -1,6 +1,6 @@
 {
-  "id": "team-vue-dev",
-  "name": "Team Vue Dev",
+  "id": "VUE-DEV",
+  "name": "VUE-DEV",
   "description": "Vue 3 + TypeScript 团队标准开发环境",
   "settings": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
