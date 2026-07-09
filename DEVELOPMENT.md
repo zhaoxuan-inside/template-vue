@@ -366,31 +366,40 @@ main ← develop ← feature/* | hotfix/* | release/*
 
 ### 4.2 Conventional Commits（commitlint 强制）
 
-**提交格式**：
+**提交格式**（以下格式均支持）：
 
 ```
-[<type>] <description>
-
-<body>
-
-<footer>
+[<type>(<scope>)] <description>   # 带括号格式
+<type>(<scope>): <description>    # 标准格式
+<type>(<scope>) <description>     # 空格分隔格式
 ```
+
+**支持的格式示例**：
+
+| 格式                        | 示例                            |
+| :-------------------------- | :------------------------------ |
+| `[type] description`        | `[feat] add login domain`       |
+| `[type(scope)] description` | `[feat(user)] add login domain` |
+| `type: description`         | `feat: add login domain`        |
+| `type(scope): description`  | `feat(user): add login domain`  |
+| `type description`          | `feat add login domain`         |
+| `type(scope) description`   | `feat(user) add login domain`   |
 
 **Type 说明**：
 
-| Type     | 说明     | 示例                          |
-| :------- | :------- | :---------------------------- |
-| feat     | 新功能   | `[feat] add login domain`     |
-| fix      | 修复 bug | `[fix] correct token refresh` |
-| docs     | 文档更新 | `[docs] update README`        |
-| style    | 代码样式 | `[style] format code`         |
-| refactor | 重构     | `[refactor] optimize request` |
-| perf     | 性能优化 | `[perf] reduce bundle size`   |
-| test     | 测试     | `[test] add unit tests`       |
-| build    | 构建配置 | `[build] update vite config`  |
-| ci       | CI 配置  | `[ci] update github actions`  |
-| chore    | 日常维护 | `[chore] update dependencies` |
-| revert   | 撤销提交 | `[revert] revert commit xxx`  |
+| Type     | 说明     |
+| :------- | :------- |
+| feat     | 新功能   |
+| fix      | 修复 bug |
+| docs     | 文档更新 |
+| style    | 代码样式 |
+| refactor | 重构     |
+| perf     | 性能优化 |
+| test     | 测试     |
+| build    | 构建配置 |
+| ci       | CI 配置  |
+| chore    | 日常维护 |
+| revert   | 撤销提交 |
 
 ### 4.3 提交前检查
 

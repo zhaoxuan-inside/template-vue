@@ -27,8 +27,8 @@ export default {
   },
   parserPreset: {
     parserOpts: {
-      headerPattern: /^\[(\w+)\]\s+(.+)$/,
-      headerCorrespondence: ['type', 'subject'],
+      headerPattern: /^(?:\[)?(\w+)(?:\(([^)]+)\))?(?:\])?(?::\s+|\s+)(.+)$/,
+      headerCorrespondence: ['type', 'scope', 'subject'],
     },
   },
 }
