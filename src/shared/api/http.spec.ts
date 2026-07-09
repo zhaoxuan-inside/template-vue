@@ -195,31 +195,25 @@ describe('HTTP Client', () => {
   })
 
   it('handles 401 error by removing token', async () => {
-    let errorInterceptor: ((error: unknown) => Promise<never>) | null = null
-    vi.doMock('axios', () => {
-      const mockInstance = {
-        get: vi.fn(() => Promise.reject({ response: { status: 401 } })),
-        post: vi.fn(),
-        put: vi.fn(),
-        delete: vi.fn(),
-        interceptors: {
-          request: { use: vi.fn() },
-          response: {
-            use: vi.fn((_fulfilled: unknown, rejected: unknown) => {
-              errorInterceptor = rejected as (error: unknown) => Promise<never>
-            }),
+    const mockResponseInterceptor = vi.fn()
+    vi.doMock('axios', () => ({
+      default: {
+        create: vi.fn(() => ({
+          get: vi.fn(() => Promise.reject({ response: { status: 401 } })),
+          post: vi.fn(),
+          put: vi.fn(),
+          delete: vi.fn(),
+          interceptors: {
+            request: { use: vi.fn() },
+            response: { use: mockResponseInterceptor },
           },
-        },
-      }
-      return {
-        default: {
-          create: vi.fn(() => mockInstance),
-        },
-      }
-    })
+        })),
+      },
+    }))
 
     await import('./http')
 
+    const errorInterceptor = mockResponseInterceptor.mock.calls[0]?.[1]
     if (errorInterceptor) {
       await expect(errorInterceptor({ response: { status: 401 } })).rejects.toMatchObject({
         response: { status: 401 },
@@ -282,34 +276,41 @@ describe('HTTP Client', () => {
   })
 
   it('adds Authorization header when token exists', async () => {
-    vi.doMock('axios', () => {
-      const mockInstance = {
-        get: vi.fn(() => Promise.resolve({ data: {} })),
-        post: vi.fn(),
-        put: vi.fn(),
-        delete: vi.fn(),
-        interceptors: {
-          request: {
-            use: vi.fn((handler) => {
-              const result = handler({ url: '/test', headers: {} })
-              mockInstance._requestHandler = result
-            }),
-          },
-          response: { use: vi.fn() },
-        },
-        _requestHandler: null as unknown,
+    const mockInstance: {
+      get: ReturnType<typeof vi.fn>
+      post: ReturnType<typeof vi.fn>
+      put: ReturnType<typeof vi.fn>
+      delete: ReturnType<typeof vi.fn>
+      interceptors: {
+        request: { use: ReturnType<typeof vi.fn> }
+        response: { use: ReturnType<typeof vi.fn> }
       }
-      return {
-        default: {
-          create: vi.fn(() => mockInstance),
+      _requestHandler: { url: string; headers: Record<string, string> } | null
+    } = {
+      get: vi.fn(() => Promise.resolve({ data: {} })),
+      post: vi.fn(),
+      put: vi.fn(),
+      delete: vi.fn(),
+      interceptors: {
+        request: {
+          use: vi.fn((handler) => {
+            const result = handler({ url: '/test', headers: {} })
+            mockInstance._requestHandler = result
+          }),
         },
-      }
-    })
+        response: { use: vi.fn() },
+      },
+      _requestHandler: null,
+    }
+
+    vi.doMock('axios', () => ({
+      default: {
+        create: vi.fn(() => mockInstance),
+      },
+    }))
 
     await import('./http')
 
-    const axiosModule = await import('axios')
-    const mockInstance = axiosModule.default.create()
     expect(mockInstance._requestHandler?.headers?.Authorization).toBe('Bearer test-token')
   })
 })
