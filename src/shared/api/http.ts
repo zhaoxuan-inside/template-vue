@@ -34,27 +34,27 @@ http.interceptors.response.use(
   }
 )
 
-export async function get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
+export async function get<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> {
   return http.get(url, config)
 }
 
-export async function post<T = any>(
+export async function post<T = unknown>(
   url: string,
-  data?: any,
+  data?: unknown,
   config?: AxiosRequestConfig
 ): Promise<T> {
   return http.post(url, data, config)
 }
 
-export async function put<T = any>(
+export async function put<T = unknown>(
   url: string,
-  data?: any,
+  data?: unknown,
   config?: AxiosRequestConfig
 ): Promise<T> {
   return http.put(url, data, config)
 }
 
-export async function del<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
+export async function del<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> {
   return http.delete(url, config)
 }
 

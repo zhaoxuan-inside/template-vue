@@ -25,7 +25,7 @@ describe('HTTP Client', () => {
     vi.clearAllMocks()
     localStorageMock.getItem.mockReturnValue('test-token')
     localStorageMock.removeItem.mockImplementation(() => {})
-    ;(window as any).location.href = '/'
+    ;(window as { location: { href: string } }).location.href = '/'
     vi.resetModules()
   })
 
@@ -37,7 +37,7 @@ describe('HTTP Client', () => {
   it('sends GET request and returns data', async () => {
     vi.doMock('axios', () => {
       const mockInstance = {
-        get: vi.fn((url: string, config?: any) => {
+        get: vi.fn((url: string, config?: unknown) => {
           if (mockInstance._requestInterceptor) {
             mockInstance._requestInterceptor({
               url,
@@ -66,8 +66,8 @@ describe('HTTP Client', () => {
             }),
           },
         },
-        _requestInterceptor: null as any,
-        _responseInterceptor: null as any,
+        _requestInterceptor: null as ((config: unknown) => unknown) | null,
+        _responseInterceptor: null as ((response: unknown) => unknown) | null,
       }
       return {
         default: {
@@ -83,11 +83,11 @@ describe('HTTP Client', () => {
   })
 
   it('sends POST request with data', async () => {
-    let capturedData: any = null
+    let capturedData: unknown = null
     vi.doMock('axios', () => {
       const mockInstance = {
         get: vi.fn(),
-        post: vi.fn((_url: string, data?: any, _config?: any) => {
+        post: vi.fn((_url: string, data?: unknown, _config?: unknown) => {
           capturedData = data
           const response = { data: { success: true } }
           if (mockInstance._responseInterceptor) {
@@ -105,7 +105,7 @@ describe('HTTP Client', () => {
             }),
           },
         },
-        _responseInterceptor: null as any,
+        _responseInterceptor: null as ((response: unknown) => unknown) | null,
       }
       return {
         default: {
@@ -121,12 +121,12 @@ describe('HTTP Client', () => {
   })
 
   it('sends PUT request with data', async () => {
-    let capturedData: any = null
+    let capturedData: unknown = null
     vi.doMock('axios', () => {
       const mockInstance = {
         get: vi.fn(),
         post: vi.fn(),
-        put: vi.fn((_url: string, data?: any, _config?: any) => {
+        put: vi.fn((_url: string, data?: unknown, _config?: unknown) => {
           capturedData = data
           const response = { data: { success: true } }
           if (mockInstance._responseInterceptor) {
@@ -143,7 +143,7 @@ describe('HTTP Client', () => {
             }),
           },
         },
-        _responseInterceptor: null as any,
+        _responseInterceptor: null as ((response: unknown) => unknown) | null,
       }
       return {
         default: {
@@ -164,7 +164,7 @@ describe('HTTP Client', () => {
         get: vi.fn(),
         post: vi.fn(),
         put: vi.fn(),
-        delete: vi.fn((_url: string, _config?: any) => {
+        delete: vi.fn((_url: string, _config?: unknown) => {
           const response = { data: { success: true } }
           if (mockInstance._responseInterceptor) {
             return Promise.resolve(mockInstance._responseInterceptor(response))
@@ -179,7 +179,7 @@ describe('HTTP Client', () => {
             }),
           },
         },
-        _responseInterceptor: null as any,
+        _responseInterceptor: null as ((response: unknown) => unknown) | null,
       }
       return {
         default: {
@@ -195,7 +195,7 @@ describe('HTTP Client', () => {
   })
 
   it('handles 401 error by removing token', async () => {
-    let errorInterceptor: ((error: any) => any) | null = null
+    let errorInterceptor: ((error: unknown) => Promise<never>) | null = null
     vi.doMock('axios', () => {
       const mockInstance = {
         get: vi.fn(() => Promise.reject({ response: { status: 401 } })),
@@ -205,8 +205,8 @@ describe('HTTP Client', () => {
         interceptors: {
           request: { use: vi.fn() },
           response: {
-            use: vi.fn((_fulfilled: any, rejected: any) => {
-              errorInterceptor = rejected
+            use: vi.fn((_fulfilled: unknown, rejected: unknown) => {
+              errorInterceptor = rejected as (error: unknown) => Promise<never>
             }),
           },
         },
@@ -297,7 +297,7 @@ describe('HTTP Client', () => {
           },
           response: { use: vi.fn() },
         },
-        _requestHandler: null as any,
+        _requestHandler: null as unknown,
       }
       return {
         default: {

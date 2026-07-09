@@ -27,6 +27,25 @@ export default [
   ...vue.configs['flat/recommended'],
   prettierConfig,
   {
+    files: ['**/*.vue', '**/*.{ts,tsx}'],
+    plugins: {
+      vue,
+      '@typescript-eslint': typescript,
+      prettier,
+      boundaries,
+    },
+    settings: {
+      'boundaries/elements': [
+        { type: 'app', pattern: 'src/app/**' },
+        { type: 'pages', pattern: 'src/pages/**' },
+        { type: 'widgets', pattern: 'src/widgets/**' },
+        { type: 'features', pattern: 'src/features/**' },
+        { type: 'entities', pattern: 'src/entities/**' },
+        { type: 'shared', pattern: 'src/shared/**' },
+      ],
+    },
+  },
+  {
     files: ['**/*.vue'],
     languageOptions: {
       parser: vue.parser,
@@ -40,19 +59,13 @@ export default [
         ...globals.node,
       },
     },
-    plugins: {
-      vue,
-      '@typescript-eslint': typescript,
-      prettier,
-      boundaries,
-    },
     rules: {
       'prettier/prettier': 'error',
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'error',
       'vue/multi-word-component-names': 'warn',
       'vue/no-v-html': 'warn',
       'vue/require-default-prop': 'off',
@@ -77,6 +90,48 @@ export default [
           multiline: { max: 1 },
         },
       ],
+      'boundaries/dependencies': [
+        'error',
+        {
+          default: 'disallow',
+          policies: [
+            {
+              from: { element: { types: 'app' } },
+              allow: {
+                element: {
+                  types: { anyOf: ['app', 'pages', 'widgets', 'features', 'entities', 'shared'] },
+                },
+              },
+            },
+            {
+              from: { element: { types: 'pages' } },
+              allow: {
+                element: {
+                  types: { anyOf: ['pages', 'widgets', 'features', 'entities', 'shared'] },
+                },
+              },
+            },
+            {
+              from: { element: { types: 'widgets' } },
+              allow: {
+                element: { types: { anyOf: ['widgets', 'features', 'entities', 'shared'] } },
+              },
+            },
+            {
+              from: { element: { types: 'features' } },
+              allow: { element: { types: { anyOf: ['features', 'entities', 'shared'] } } },
+            },
+            {
+              from: { element: { types: 'entities' } },
+              allow: { element: { types: { anyOf: ['entities', 'shared'] } } },
+            },
+            {
+              from: { element: { types: 'shared' } },
+              allow: { element: { types: 'shared' } },
+            },
+          ],
+        },
+      ],
     },
   },
   {
@@ -93,18 +148,55 @@ export default [
         ...globals.node,
       },
     },
-    plugins: {
-      '@typescript-eslint': typescript,
-      prettier,
-      boundaries,
-    },
     rules: {
       'prettier/prettier': 'error',
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'error',
+      'boundaries/dependencies': [
+        'error',
+        {
+          default: 'disallow',
+          policies: [
+            {
+              from: { element: { types: 'app' } },
+              allow: {
+                element: {
+                  types: { anyOf: ['app', 'pages', 'widgets', 'features', 'entities', 'shared'] },
+                },
+              },
+            },
+            {
+              from: { element: { types: 'pages' } },
+              allow: {
+                element: {
+                  types: { anyOf: ['pages', 'widgets', 'features', 'entities', 'shared'] },
+                },
+              },
+            },
+            {
+              from: { element: { types: 'widgets' } },
+              allow: {
+                element: { types: { anyOf: ['widgets', 'features', 'entities', 'shared'] } },
+              },
+            },
+            {
+              from: { element: { types: 'features' } },
+              allow: { element: { types: { anyOf: ['features', 'entities', 'shared'] } } },
+            },
+            {
+              from: { element: { types: 'entities' } },
+              allow: { element: { types: { anyOf: ['entities', 'shared'] } } },
+            },
+            {
+              from: { element: { types: 'shared' } },
+              allow: { element: { types: 'shared' } },
+            },
+          ],
+        },
+      ],
     },
   },
   {

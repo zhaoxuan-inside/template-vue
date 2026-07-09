@@ -1,5 +1,4 @@
 export default {
-  extends: ['@commitlint/config-conventional'],
   rules: {
     'type-enum': [
       2,
@@ -25,5 +24,11 @@ export default {
     'subject-full-stop': [2, 'never', '.'],
     'header-max-length': [2, 'always', 100],
     'body-max-line-length': [2, 'always', 100],
+  },
+  parserPreset: {
+    parserOpts: {
+      headerPattern: /^\[(\w+)\]\s+(.+)$/,
+      headerCorrespondence: ['type', 'subject'],
+    },
   },
 }

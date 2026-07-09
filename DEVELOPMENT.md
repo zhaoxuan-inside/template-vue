@@ -16,25 +16,58 @@
 
 ### 1.2 快速开始
 
-```bash
-# 1. 克隆项目
-git clone <repo-url>
-cd <project-name>
+#### 从模板项目创建新项目
 
-# 2. 安装 Node.js 版本（自动读取 .nvmrc）
+```bash
+# 1. 使用 GitHub 模板创建新仓库
+# 在 GitHub 上点击 "Use this template" 创建新仓库
+
+# 2. 克隆新项目
+git clone <your-repo-url> <your-project-name>
+cd <your-project-name>
+
+# 3. 移除模板项目的 Git 历史并重新初始化
+rm -rf .git
+git init
+
+# 4. 配置新的远程仓库
+git remote add origin <your-repo-url>
+
+# 5. 更新项目标识（根据实际情况修改）
+# - 修改 package.json 中的 name、description、author
+# - 修改 README.md 中的项目名称和描述
+# - 修改 src/app/config/app.ts 中的应用标题
+
+# 6. 安装 Node.js 版本（自动读取 .nvmrc）
 # Windows 用户推荐 fnm，Mac/Linux 用户推荐 nvm
 fnm use --install-if-missing # 或 nvm use
 
-# 3. 使用团队 Profile 打开项目（首次必须执行）
+# 7. 使用团队 Profile 打开项目（首次必须执行）
 code --profile "Team Vue Dev" .
 
-# 4. 安装推荐扩展
+# 8. 安装推荐扩展
 npm run install:ext
 
-# 5. 一键初始化依赖与钩子
+# 9. 一键初始化依赖与钩子
 npm run setup
 
-# 6. 启动开发服务器
+# 10. 启动开发服务器
+npm run dev
+```
+
+#### 已有项目日常开发
+
+```bash
+# 1. 拉取最新代码
+git pull origin main
+
+# 2. 安装/更新依赖
+npm install
+
+# 3. 使用团队 Profile 打开项目
+code --profile "Team Vue Dev" .
+
+# 4. 启动开发服务器
 npm run dev
 ```
 
@@ -138,34 +171,56 @@ export const env = envSchema.parse(import.meta.env)
 
 项目采用 **Feature-Sliced Design (FSD)** 架构作为目录组织方式，结合 **Composable + Store 分层** 作为逻辑组织方式。
 
-#### 🗺️ 代码存放决策树
+#### 📁 项目目录结构与用途
 
-当你不确定代码放哪里时，请按以下流程判断：
-
-```text
-你要写的代码是什么？
-│
-├─ 纯业务规则/数据转换/校验（无 Vue/UI 依赖）
-│  └─ ✅ entities/<entity>/model/useXxx.ts (Domain Composable)
-│
-├─ Naive UI 交互封装（弹窗/消息/表格分页）
-│  └─ ✅ features/<feature>/composables/ui/useNaiveXxx.ts
-│
-├─ 响应式状态 + 异步编排（调用 Domain Composable）
-│  └─ ✅ features/<feature>/stores/xxxStore.ts
-│
-├─ 页面级组装（仅组合 widgets/features）
-│  └─ ✅ pages/<PageName>/index.vue
-│
-├─ 可复用的复合 UI 组件（Header/Sidebar）
-│  └─ ✅ widgets/<WidgetName>/index.vue
-│
-├─ Naive UI 二次封装基础组件
-│  └─ ✅ shared/ui/<ComponentName>.vue
-│
-└─ 通用工具函数/API 客户端/配置
-   └─ ✅ shared/lib/ | shared/api/ | shared/config/
 ```
+src/
+├── app/                    # 应用入口（providers、routing、全局样式）
+│   ├── providers/          # 全局 Provider（Naive UI、Pinia、i18n）
+│   ├── routing/            # 路由配置
+│   └── styles/             # 全局样式（Tailwind v4 @theme）
+├── pages/                  # 页面层（仅组装 widgets/features）
+│   └── <PageName>/         # 页面目录
+│       └── index.vue       # 页面入口
+├── features/               # 功能层（用户交互场景，跨实体编排）
+│   └── <feature>/          # 功能模块
+│       ├── components/     # 该功能专属组件
+│       ├── composables/    # Domain/UI Composable
+│       │   ├── domain/     # 纯业务逻辑（零 Vue/UI 依赖）
+│       │   └── ui/         # Naive UI 交互封装
+│       ├── stores/         # Pinia Store（响应式胶水层）
+│       └── index.ts        # 公共 API 导出
+├── entities/               # 实体层（领域模型、纯 TS Composable）
+│   └── <entity>/           # 实体目录
+│       ├── model/          # Domain Composable（纯业务规则）
+│       ├── api/            # 实体相关 API
+│       ├── types/          # 实体类型定义
+│       └── index.ts        # 公共 API 导出
+├── widgets/                # 复合组件层（Header、Sidebar）
+│   └── <WidgetName>/       # 组件目录
+│       └── index.vue       # 组件入口
+└── shared/                 # 共享基础设施
+    ├── ui/                 # Naive UI 二次封装组件（业务代码必须从这里导入）
+    ├── lib/                # 通用工具函数（日期、验证、格式化等）
+    ├── api/                # HTTP 客户端（Axios 实例、拦截器）
+    └── config/             # 全局配置（环境变量、路由配置等）
+```
+
+**目录用途速查表**：
+
+| 目录                                  | 用途                  | 核心约束                                     |
+| :------------------------------------ | :-------------------- | :------------------------------------------- |
+| `app/`                                | 应用入口与全局配置    | 仅存放 Provider、路由、全局样式              |
+| `pages/`                              | 页面级组装            | 仅组合 widgets/features，不含业务逻辑        |
+| `features/<name>/components/`         | 功能专属组件          | 仅服务于当前 feature                         |
+| `features/<name>/composables/domain/` | 纯业务逻辑            | 零 Vue/UI 依赖，可在 Node.js 独立测试        |
+| `features/<name>/composables/ui/`     | Naive UI 交互封装     | 隔离 UI 库细节                               |
+| `features/<name>/stores/`             | Pinia Store           | 仅做响应式胶水层，调用 Domain Composable     |
+| `entities/<name>/model/`              | 领域模型与业务规则    | 纯 TS，零框架依赖                            |
+| `widgets/`                            | 可复用复合组件        | 禁止直接 import features                     |
+| `shared/ui/`                          | Naive UI 二次封装组件 | 业务代码必须从这里导入，禁止直接使用原生组件 |
+| `shared/lib/`                         | 通用工具函数          | 无框架依赖                                   |
+| `shared/api/`                         | HTTP 客户端配置       | Axios 实例与拦截器                           |
 
 #### 🔒 依赖规则（ESLint 强制执行）
 
@@ -216,7 +271,7 @@ npm run build      # 构建生产版本
 | Store 文件      | camelCase + Store 后缀        | `loginStore.ts`                      |
 | 类型文件        | camelCase                     | `user.ts`, `auth.ts`                 |
 | CSS 类名        | Tailwind 优先，scoped 兜底    | `class="text-primary mt-2"`          |
-| 常量            | UPPER_SNAKE_CASE              | `MAX_RETRY_COUNT`                    |
+| 常量            | UPPER\_SNAKE\_CASE            | `MAX_RETRY_COUNT`                    |
 | 事件            | on 前缀（Props）/ emit 无前缀 | `onSubmit` / `emit('submit')`        |
 
 ### 2.3 测试策略
@@ -275,19 +330,29 @@ npm run sync:theme
 | 废弃提示     | `@deprecated` + `eslint-plugin-deprecation`     | IDE 划线 + 构建警告                      |
 | 安全扫描     | `npm audit` + CSP Header + `v-html` 审批        | CI 阻断高危漏洞                          |
 
-### 3.5 Code Review 检查清单
+### 3.5 自动化检查（ESLint + CI）
 
-> CR 不是可选建议，是合并前的**强制门禁**。Reviewer 必须逐项确认：
+代码规范检查已完全自动化，**无需人工检查**。以下检查项在提交代码时通过 `lint-staged` 自动执行，在 CI 流水线中强制验证：
 
-- [ ] **FSD 依赖方向**：是否违反 `shared ← entities ← features ← widgets ← pages`？
-- [ ] **Domain 纯净性**：Domain Composable 是否包含 Vue/Naive UI 引用？
-- [ ] **Naive UI 封装**：是否直接从 `naive-ui` 导入原生组件？
-- [ ] **Store 职责**：Store 是否包含复杂业务判断（应下沉到 Domain）？
-- [ ] **Widgets 隔离**：Widget 是否直接 import 了 features 模块？
-- [ ] **测试覆盖**：新增 Domain Composable 是否有对应单元测试？
-- [ ] **类型安全**：是否存在 `any`？函数是否有返回类型？
-- [ ] **环境变量**：新增变量是否同步更新 `.env.example` 和 zod schema？
-- [ ] **i18n 预留**：硬编码文案是否已提取到 i18n key（即使当前未启用）？
+| 检查项                          | 执行方式                                       | 阻断级别 |
+| :------------------------------ | :--------------------------------------------- | :------- |
+| FSD 依赖方向                    | `eslint-plugin-boundaries`                     | ❌ 阻断  |
+| Domain 纯净性（无 Vue/UI 依赖） | ESLint 自定义规则                              | ❌ 阻断  |
+| Naive UI 原生组件直接导入       | ESLint `no-restricted-imports`                 | ❌ 阻断  |
+| Widgets 直接 import features    | `eslint-plugin-boundaries`                     | ❌ 阻断  |
+| 类型安全（禁止 any）            | TypeScript 严格模式 + ESLint `no-explicit-any` | ❌ 阻断  |
+| 函数返回类型                    | TypeScript `noImplicitReturns`                 | ❌ 阻断  |
+| 环境变量校验                    | zod schema + CI 构建检查                       | ❌ 阻断  |
+| 测试覆盖                        | Vitest + CI 覆盖率阈值                         | ⚠️ 警告  |
+| 主题同步                        | `npm run sync:theme` + CI 校验                 | ❌ 阻断  |
+
+**提交前自动执行**：
+
+```bash
+npm run lint       # ESLint + Boundaries 检查
+npm run type-check # TypeScript 类型检查
+npm run test:run   # 单元测试
+```
 
 ---
 
@@ -304,7 +369,7 @@ main ← develop ← feature/* | hotfix/* | release/*
 **提交格式**：
 
 ```
-<type>(<scope>): <description>
+[<type>] <description>
 
 <body>
 
@@ -313,19 +378,19 @@ main ← develop ← feature/* | hotfix/* | release/*
 
 **Type 说明**：
 
-| Type     | 说明     | 示例                               |
-| :------- | :------- | :--------------------------------- |
-| feat     | 新功能   | `feat(user): add login domain`     |
-| fix      | 修复 bug | `fix(auth): correct token refresh` |
-| docs     | 文档更新 | `docs: update README`              |
-| style    | 代码样式 | `style: format code`               |
-| refactor | 重构     | `refactor(api): optimize request`  |
-| perf     | 性能优化 | `perf: reduce bundle size`         |
-| test     | 测试     | `test: add unit tests`             |
-| build    | 构建配置 | `build: update vite config`        |
-| ci       | CI 配置  | `ci: update github actions`        |
-| chore    | 日常维护 | `chore: update dependencies`       |
-| revert   | 撤销提交 | `revert: revert commit xxx`        |
+| Type     | 说明     | 示例                          |
+| :------- | :------- | :---------------------------- |
+| feat     | 新功能   | `[feat] add login domain`     |
+| fix      | 修复 bug | `[fix] correct token refresh` |
+| docs     | 文档更新 | `[docs] update README`        |
+| style    | 代码样式 | `[style] format code`         |
+| refactor | 重构     | `[refactor] optimize request` |
+| perf     | 性能优化 | `[perf] reduce bundle size`   |
+| test     | 测试     | `[test] add unit tests`       |
+| build    | 构建配置 | `[build] update vite config`  |
+| ci       | CI 配置  | `[ci] update github actions`  |
+| chore    | 日常维护 | `[chore] update dependencies` |
+| revert   | 撤销提交 | `[revert] revert commit xxx`  |
 
 ### 4.3 提交前检查
 
@@ -370,42 +435,145 @@ npm run test:run   # 单元测试
 ### 5.2 核心 System Prompt
 
 ```markdown
-你是一名资深 Vue 3 + TypeScript 前端工程师，严格遵守本项目 FSD × Composable 分层架构。
+# Role
 
-## 技术栈
+你是一名拥有 10 年经验的资深 Vue 3 + TypeScript 前端架构师，精通 FSD (Feature-Sliced Design) 架构、Composable 分层模式、Naive UI 和 Tailwind CSS v4。你输出的代码必须是生产级别的，遵循项目所有规范和最佳实践。
 
-Vue 3 (Composition API + <script setup>) | TypeScript (严格模式，禁止 any)
-Vite 6 | Tailwind CSS v4 (CSS-first) | Naive UI (仅通过 @shared/ui/ 使用)
-Pinia (胶水层) | Vitest | ESLint Flat Config + eslint-plugin-boundaries
+# Prerequisite
 
-## 架构铁律
+在执行任何任务之前，**必须首先阅读并理解项目根目录的 README.md 文件**，掌握项目的技术栈、架构设计和核心特性。
 
-1. Domain Composable (entities/*/model/)：纯 TS，零 Vue/UI 依赖，可在 Node.js 独立测试
-2. UI Adapter Composable (features/*/composables/ui/)：封装 Naive UI 交互
-3. Store (features/*/stores/)：仅做响应式胶水层，调用 Domain Composable
-4. View (<script setup>)：仅消费 Store 和 UI Composable，模板禁止业务计算
-5. FSD 依赖方向：shared ← entities ← features ← widgets ← pages ← app
-6. widgets 禁止直接 import features，仅通过 props/slots 注入
-7. Naive UI 原生组件仅在 shared/ui/ 中出现
+# Project Context
 
-## 代码风格
+## Tech Stack
 
-- 单文件组件：<script setup lang="ts"> → <template> → <style scoped>
-- 路径别名：@shared/* @entities/* @features/* @widgets/* @pages/* @app/*
-- 命名：函数/变量 camelCase，组件 PascalCase，类型 PascalCase
-- 样式：Tailwind CSS v4 @theme 变量优先，<style scoped> 仅用于特殊覆盖
-- 格式：单引号、无分号、行宽 100、尾逗号 all
+- Vue 3 (Composition API + <script setup>)
+- TypeScript 5.x (严格模式，禁止 `any`)
+- Vite 6.x
+- Tailwind CSS v4 (CSS-first 配置，使用 `@import "tailwindcss"` 和 `@theme`)
+- Naive UI 2.x (仅通过 `@shared/ui/` 二次封装组件使用，禁止直接导入原生组件)
+- Pinia 2.x (状态管理，仅做响应式胶水层)
+- Vue Router 4.x
+- Vitest 4.x (单元测试)
+- MSW 2.x (API Mock)
+- ESLint Flat Config + eslint-plugin-boundaries (FSD 依赖检查)
 
-## 输出要求
+## Architecture Principles
 
-- 生成的代码必须符合上述所有约束
-- 提供完整 TypeScript 类型定义，函数必须有返回类型
-- Domain 逻辑必须抽离为纯 TS Composable
-- Naive UI 交互必须封装到 composables/ui/
-- 关键业务逻辑添加 JSDoc 注释
-- 不生成冗余代码，不使用 any
-- 新增 Domain Composable 必须附带 Vitest 测试用例
+### FSD Layers (Physical Structure)
 ```
+
+src/
+├── app/ # 应用入口（providers、routing、全局样式）
+├── pages/ # 页面层（仅组装 widgets/features）
+├── features/ # 功能层（用户交互场景，跨实体编排）
+├── entities/ # 实体层（领域模型、纯 TS Composable）
+├── widgets/ # 复合组件层（Header、Sidebar）
+└── shared/ # 共享基础设施
+├── ui/ # Naive UI 二次封装组件（业务代码必须从这里导入）
+├── lib/ # 通用工具函数
+├── api/ # HTTP 客户端
+└── config/ # 全局配置
+
+````
+
+### Composable Layers (Logical Structure)
+| Layer | Location | Responsibility | Constraints |
+|-------|----------|----------------|-------------|
+| Domain | `entities/*/model/useXxx.ts` | 纯业务规则、数据转换、校验 | 零 Vue/Naive UI 依赖，可在 Node.js 独立测试 |
+| State | `features/*/stores/xxxStore.ts` | 响应式状态、异步编排、跨模块协调 | 仅做胶水层，不含复杂业务判断 |
+| UI Adapter | `features/*/composables/ui/useNaiveXxx.ts` | Naive UI 交互封装（弹窗、消息、表格分页等） | 隔离 UI 库细节，便于未来替换 |
+| View | `<script setup>` + Template | 数据绑定、事件转发、UI 渲染 | 模板中禁止业务计算，仅消费 Store/UI Composable |
+
+### Dependency Rules (Enforced by ESLint)
+- **Allowed**: `shared ← entities ← features ← widgets ← pages ← app`
+- **Forbidden**: 下层依赖上层
+- **Forbidden**: 同层 slice 之间直接引用（必须通过 entities 或 shared 中转）
+- **Forbidden**: widgets 直接 import features（仅通过 props/slots 注入）
+
+## Code Standards
+
+### Style Guide
+- **File Structure**: `<script setup lang="ts">` → `<template>` → `<style scoped>`
+- **Quotes**: Single quotes (`'`)
+- **Semicolons**: None
+- **Line Width**: 100 characters
+- **Trailing Commas**: All
+- **Path Aliases**: `@shared/*`, `@entities/*`, `@features/*`, `@widgets/*`, `@pages/*`, `@app/*`
+
+### Naming Conventions
+- Components: PascalCase (`UserLoginForm.vue`)
+- Composables: camelCase + `use` prefix (`useUserModel.ts`)
+- Stores: camelCase + `Store` suffix (`loginStore.ts`)
+- Types: PascalCase (`User`, `AuthResponse`)
+- Constants: UPPER_SNAKE_CASE (`MAX_RETRY_COUNT`)
+- Events: `on` prefix for props (`onSubmit`), no prefix for emit (`emit('submit')`)
+
+### Naive UI Rules
+1. **禁止直接导入原生组件**：业务代码中不得出现 `import { NButton } from 'naive-ui'`
+2. **交互逻辑下沉**：`useDialog`/`useMessage`/`useNotification` 必须在 `composables/ui/` 中封装
+3. **主题变量走 Tailwind**：颜色/间距优先使用 `@theme` 定义的变量
+4. **全局配置集中管理**：`NConfigProvider` 仅在 `app/providers/NaiveProvider.vue` 中配置
+
+### Type Safety
+- **禁止 `any`**：使用 `unknown` 替代，或定义精确类型
+- **函数返回类型**：必须显式声明返回类型
+- **Props 类型**：使用 `withDefaults(defineProps<Props>())`
+- **事件类型**：使用 `defineEmits<Emits>()`
+
+### Error Handling
+- **API 请求**：统一使用 `try/catch`，错误信息统一处理
+- **用户提示**：通过 `composables/ui/` 封装的交互函数展示
+- **日志记录**：关键操作添加适当的日志
+
+## Output Requirements
+
+### Mandatory
+1. **遵循所有架构约束**：FSD 依赖规则、Composable 分层、Naive UI 封装
+2. **完整 TypeScript 类型**：函数返回类型、Props 类型、事件类型
+3. **Domain 逻辑抽离**：业务规则必须在 Domain Composable 中实现
+4. **Naive UI 交互封装**：弹窗、消息等交互必须封装到 `composables/ui/`
+5. **JSDoc 注释**：关键业务逻辑和复杂函数添加 JSDoc
+6. **无冗余代码**：不生成不必要的代码，不使用 `any`
+7. **测试用例**：新增 Domain Composable 必须附带 Vitest 测试用例
+
+### Recommended
+1. **性能优化**：使用 `computed`、`memo` 避免不必要的计算
+2. **可访问性**：遵循 WCAG 标准，添加适当的 ARIA 属性
+3. **i18n 预留**：硬编码文案使用 i18n key（即使当前未启用）
+4. **代码复用**：遵循 DRY 原则，避免重复代码
+
+# Response Format
+
+请按照以下格式输出代码：
+
+```typescript
+// 清晰的代码块，包含必要的注释
+// 关键函数添加 JSDoc
+// 提供完整的类型定义
+````
+
+如果涉及多个文件，请使用文件分隔符：
+
+```
+--- file: src/features/userLogin/stores/loginStore.ts ---
+
+// 代码内容
+```
+
+# Commit Message Format
+
+```
+[<type>] <description>
+
+<body>
+
+<footer>
+```
+
+Type 枚举：`feat` | `fix` | `docs` | `style` | `refactor` | `perf` | `test` | `build` | `ci` | `chore` | `revert`
+
+````
 
 ### 5.3 Skill 推荐
 
@@ -439,7 +607,7 @@ Pinia (胶水层) | Vitest | ESLint Flat Config + eslint-plugin-boundaries
 - Naive UI 组件从 @shared/ui/ 导入
 - 交互逻辑封装到 composables/ui/
 - 附带 Vitest 测试用例
-```
+````
 
 **Domain Composable 开发**：
 
@@ -464,18 +632,7 @@ Pinia (胶水层) | Vitest | ESLint Flat Config + eslint-plugin-boundaries
 
 ## 六、附录
 
-### A. 应急响应 SOP
-
-| 级别 | 操作                                                      | 适用场景             |
-| :--- | :-------------------------------------------------------- | :------------------- |
-| L1   | `Ctrl+Shift+P` → `Volar: Restart Vue Server`              | 类型报错、组件不识别 |
-| L1   | `Ctrl+Shift+P` → `TypeScript: Restart TS Server`          | TS 类型不更新        |
-| L2   | 删除 `node_modules` + `package-lock.json` → `npm install` | 依赖幽灵问题         |
-| L2   | `code --profile "Team Vue Dev" .` → 重新导入 Profile      | 设置/扩展异常        |
-| L3   | `npm run setup` → 完整重置                                | 钩子/环境变量丢失    |
-| L3   | 联系 Leader 并在 Issue 中记录                             | 规范本身存在缺陷     |
-
-### B. 配置文件清单
+### A. 配置文件清单
 
 | 文件                                  | 作用                            |
 | :------------------------------------ | :------------------------------ |
@@ -494,13 +651,3 @@ Pinia (胶水层) | Vitest | ESLint Flat Config + eslint-plugin-boundaries
 | `.ai/changelog.md`                    | AI 规则变更记录                 |
 | `scripts/sync-theme.ts`               | Naive UI → Tailwind 主题同步    |
 | `src/shared/config/env.ts`            | 环境变量 zod 校验               |
-
-### C. 配置变更历史
-
-| 版本 | 日期       | 变更内容                                                                                               |
-| :--- | :--------- | :----------------------------------------------------------------------------------------------------- |
-| v1.0 | 2026-07-07 | 初始版本，核心配置文件与方案                                                                           |
-| v1.1 | 2026-07-07 | 添加模板使用指南、可选配置                                                                             |
-| v1.2 | 2026-07-07 | 生成 Profile 文件、AI 提示词                                                                           |
-| v1.3 | 2026-07-07 | 修复 ESLint 配置、常见问题解答                                                                         |
-| v2.0 | 2026-07-08 | 全面升级：Vue Official v3+、Tailwind v4、commitlint、AI 规则文件、一键脚本、L1/L2/L3 SOP、文档结构重构 |
